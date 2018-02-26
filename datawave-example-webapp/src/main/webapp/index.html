@@ -1,0 +1,105 @@
+<h2>Overview</h2>
+Simple API to manage users. Implemented in the REST/HATEOAS style rather
+than, say, what is commonly referred to as JSON-RPC.
+<br />
+
+<h3>Technologies</h3>
+<p>
+Spring, Spring Data JPA, Spring Data REST, JPA (Hibernate). Could no
+doubt be done with less configuration using Spring Boot.
+</p>
+<p>
+All CRUD is done using Spring Data Rest i.e. there are at this point no custom Spring MVC controllers.
+</p>
+<h3>What is Not Done</h3>
+
+<ul>
+	<li>Any form of Security e.g. via Spring Security</li>
+	<li>Any form of data validation e.g via JSR303/JSR349 bean
+		validations plus Spring MVC Controller Advice to send JSON validation message</li>
+	<li>Providing different views of the data e.g. via Spring Data
+		Rest projections</li>
+	<li>Adding API documentation e.g. Swagger</li>
+</ul>
+
+<h3>What can be done</h3>
+
+<h5>Basic Operations:</h5>
+
+<ul>
+	<li>List all users: <a target="_blank"
+		href="http://localhost:9090/api/users">List All Users</a>. Follow
+		HATOEAS style links in the resources to navigate relationships
+	</li>
+	<li>List all departments: <a target="_blank"
+		href="http://localhost:9090/api/departments">List All Departments</a>.
+		Follow HATOEAS style links in the resources to navigate relationships
+	</li>
+</ul>
+
+<h5>Ad-Hoc Searching using Url Parameters</h5>
+<ul>
+	<li>Example <a target="_blank"
+		href="http://localhost:9090/api/users?surname=Smith">Find all
+			users with the surname Smith</a></li>
+	<li>Example <a target="_blank"
+		href="http://localhost:9090/api/users?address.town=Edinburgh&sort=surname,forename">All
+			users living in Edinburgh sorted by surname, forename</a></li>
+</ul>
+
+More advanced searching (e.g. partial name) is easy enough but needs a bit more configuration added.
+
+<h5>Paging</h5>
+<ul>
+	<li>Handle large resuls sets via paging. Use the links embdedded in the response to
+		navigate pages. Example <a target="_blank"
+		href="http://localhost:9090/api/users?sort=surname,forename&page=1&size=3">Paging
+			Example</a>
+	</li>
+</ul>
+
+<h5>Adding Users/Departments</h5>
+
+Make an HTTP <b>POST</b> request to the relevant endpoint e.g. http://localhost:9090/api/users
+
+Example Data <b>(note the department reference points to the resource URL for that department)</b>:
+<pre>
+ {
+                "forename": "June",
+                "surname": "North",
+                "emailAddress": "june@north.net",
+                "phoneNumber": "0131 654 2521",
+                "address": {
+                    "lineOne": "122 Princes Street",
+                    "lineTwo": null,
+                    "town": "Edinburgh",
+                    "postCode": "EH10 1ht"
+                },
+                "department" : "http://localhost:9090/api/departments/4"
+}
+</pre>
+
+<h5>Editing Users/Departments</h5>
+
+Make an HTTP <b>PATCH</b> request to the self HREF for the resource to be updated:
+
+e.g Update Address and Department for user with ID 1. Patch to http://localhost:9090/api/users/1 
+<br/>
+<br/>
+<b>The JSON only needs to include the fields to be updated.</b>
+<pre>
+ {
+    "address": {
+        "lineOne": "15 Newhaven Road",
+        "lineTwo": "Leith",
+        "town": "Edinburgh",
+        "postCode": "EH6 7YT"
+    },
+                
+    "department" : "http://localhost:9090/api/departments/3"
+}
+</pre>
+
+<h5>Delete Data</h5>
+
+Send a delete rquest 
